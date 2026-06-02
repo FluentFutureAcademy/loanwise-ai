@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Home, Car, GraduationCap, Briefcase, User, Heart } from "lucide-react";
+import { toast } from "sonner";
 import { defaultFormData, type FormData } from "@/lib/scoring";
+import { consumePrefill } from "@/lib/history";
 import { Field, TextInput, Toggle, Slider, PillGroup } from "./form-bits";
 import { cn } from "@/lib/utils";
 
 const steps = ["Personal", "Financial", "Loan", "Review"] as const;
+const stepLabels = ["Personal Info", "Financial Info", "Loan Details", "Review"] as const;
 
 const purposeIcons = {
   Home, Car, Education: GraduationCap, Business: Briefcase, Personal: User, Medical: Heart,
