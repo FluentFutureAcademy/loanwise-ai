@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EmiRouteImport } from './routes/emi'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
 
+const EmiRoute = EmiRouteImport.update({
+  id: '/emi',
+  path: '/emi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/emi': typeof EmiRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/emi': typeof EmiRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/compare': typeof CompareRoute
   '/dashboard': typeof DashboardRoute
+  '/emi': typeof EmiRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/compare' | '/dashboard'
+  fullPaths: '/' | '/compare' | '/dashboard' | '/emi'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/compare' | '/dashboard'
-  id: '__root__' | '/' | '/compare' | '/dashboard'
+  to: '/' | '/compare' | '/dashboard' | '/emi'
+  id: '__root__' | '/' | '/compare' | '/dashboard' | '/emi'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CompareRoute: typeof CompareRoute
   DashboardRoute: typeof DashboardRoute
+  EmiRoute: typeof EmiRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/emi': {
+      id: '/emi'
+      path: '/emi'
+      fullPath: '/emi'
+      preLoaderRoute: typeof EmiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CompareRoute: CompareRoute,
   DashboardRoute: DashboardRoute,
+  EmiRoute: EmiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
