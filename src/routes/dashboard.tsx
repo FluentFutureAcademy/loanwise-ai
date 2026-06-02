@@ -6,7 +6,7 @@ import { SiteLayout } from "@/components/site-layout";
 import { loadHistory, fmtPKR } from "@/lib/history";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — LumenLoan" }, { name: "description", content: "Visualize your loan application history with charts and insights." }] }),
+  head: () => ({ meta: [{ title: "VaultIQ Analytics" }, { name: "description", content: "Visualize your loan application history with VaultIQ charts and insights." }] }),
   component: DashboardPage,
 });
 
@@ -21,8 +21,8 @@ function DashboardPage() {
 
   useEffect(() => {
     const h = () => setHistory(loadHistory());
-    window.addEventListener("lumenloan:history", h);
-    return () => window.removeEventListener("lumenloan:history", h);
+    window.addEventListener("vaultiq:history", h);
+    return () => window.removeEventListener("vaultiq:history", h);
   }, []);
 
   const stats = useMemo(() => {
@@ -66,8 +66,8 @@ function DashboardPage() {
       <SiteLayout>
         <section className="px-6 py-20 text-center">
           <div className="mx-auto max-w-md glass rounded-3xl p-10">
-            <h1 className="text-3xl font-bold">No applications yet</h1>
-            <p className="mt-3 text-muted-foreground">Submit at least one application to unlock the dashboard.</p>
+            <h1 className="text-3xl font-bold">No applications found in VaultIQ vault.</h1>
+            <p className="mt-3 text-muted-foreground">Submit at least one application to unlock VaultIQ Analytics.</p>
             <Link to="/" hash="apply"
               className="mt-6 inline-flex rounded-xl bg-gradient-cyan px-6 py-3 text-sm font-semibold text-primary-foreground glow-cyan">
               Start an application
@@ -83,7 +83,7 @@ function DashboardPage() {
       <section className="px-6 py-12">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight">Analytics <span className="text-gradient-cyan">Dashboard</span></h1>
+            <h1 className="text-4xl font-bold tracking-tight">VaultIQ <span className="text-gradient-cyan">Analytics</span></h1>
             <p className="mt-2 text-muted-foreground">Insights across {stats.total} application{stats.total !== 1 ? "s" : ""}.</p>
           </div>
 

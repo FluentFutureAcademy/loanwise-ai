@@ -84,24 +84,24 @@ export function Hero({ onApply }: { onApply: () => void }) {
             className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-xs"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            AI-powered credit intelligence
+            🏦 Trusted AI Loan Intelligence
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="mt-6 text-5xl md:text-7xl font-bold tracking-tight leading-[1.05]"
           >
-            Smart Loan Decisions,
+            Unlock Smarter Loan Decisions with
             <br />
-            <span className="text-gradient-cyan">Powered by AI</span>
+            <span className="text-gradient-cyan">VaultIQ</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="mt-6 max-w-xl text-lg text-muted-foreground"
           >
-            Get instant loan approval predictions with intelligent financial insights — built on
-            rigorous risk modeling, delivered in seconds.
+            AI-powered loan prediction that analyzes your financial profile and delivers
+            instant, intelligent approval insights — free, fast & secure.
           </motion.p>
 
           <motion.div
@@ -125,9 +125,9 @@ export function Hero({ onApply }: { onApply: () => void }) {
 
           <div id="trust" className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl">
             {[
-              { icon: Shield, label: "Bank-Level Security" },
+              { icon: Shield, label: "Vault-Grade Security" },
               { icon: Zap, label: "Instant Results" },
-              { icon: Brain, label: "AI-Powered" },
+              { icon: Brain, label: "IQ-Powered Analysis" },
               { icon: CheckCircle2, label: "98% Accuracy" },
             ].map((b, i) => (
               <motion.div

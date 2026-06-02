@@ -7,7 +7,7 @@ import { SiteLayout } from "@/components/site-layout";
 import { loadHistory, deleteHistory, fmtPKR } from "@/lib/history";
 
 export const Route = createFileRoute("/history")({
-  head: () => ({ meta: [{ title: "History — LumenLoan" }, { name: "description", content: "All your past loan applications and decisions." }] }),
+  head: () => ({ meta: [{ title: "VaultIQ Application History" }, { name: "description", content: "All your past loan applications and decisions in your VaultIQ vault." }] }),
   component: HistoryPage,
 });
 
@@ -16,8 +16,8 @@ function HistoryPage() {
 
   useEffect(() => {
     const h = () => setHistory(loadHistory());
-    window.addEventListener("lumenloan:history", h);
-    return () => window.removeEventListener("lumenloan:history", h);
+    window.addEventListener("vaultiq:history", h);
+    return () => window.removeEventListener("vaultiq:history", h);
   }, []);
 
   const remove = (id: string) => {
@@ -33,13 +33,13 @@ function HistoryPage() {
       <section className="px-6 py-12">
         <div className="mx-auto max-w-4xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight">Application <span className="text-gradient-cyan">History</span></h1>
-            <p className="mt-2 text-muted-foreground">{history.length} record{history.length !== 1 ? "s" : ""} saved locally.</p>
+            <h1 className="text-4xl font-bold tracking-tight">VaultIQ <span className="text-gradient-cyan">Application History</span></h1>
+            <p className="mt-2 text-muted-foreground">{history.length} record{history.length !== 1 ? "s" : ""} saved locally in your VaultIQ vault.</p>
           </div>
 
           {history.length === 0 ? (
             <div className="glass rounded-3xl p-10 text-center">
-              <p className="text-muted-foreground">No applications yet.</p>
+              <p className="text-muted-foreground">No applications found in VaultIQ vault.</p>
               <Link to="/" hash="apply" className="mt-4 inline-flex rounded-xl bg-gradient-cyan px-5 py-2.5 text-sm font-semibold text-primary-foreground glow-cyan">
                 Start one
               </Link>
