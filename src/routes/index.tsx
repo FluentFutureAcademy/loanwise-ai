@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from "react";
 import { Hero } from "@/components/hero";
 import { HowItWorks } from "@/components/how-it-works";
