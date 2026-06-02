@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Home, Car, GraduationCap, Briefcase, User, Heart } from "lucide-react";
+import { toast } from "sonner";
 import { defaultFormData, type FormData } from "@/lib/scoring";
+import { consumePrefill } from "@/lib/history";
 import { Field, TextInput, Toggle, Slider, PillGroup } from "./form-bits";
 import { cn } from "@/lib/utils";
 
 const steps = ["Personal", "Financial", "Loan", "Review"] as const;
+const stepLabels = ["Personal Info", "Financial Info", "Loan Details", "Review"] as const;
 
 const purposeIcons = {
   Home, Car, Education: GraduationCap, Business: Briefcase, Personal: User, Medical: Heart,
@@ -21,9 +24,23 @@ export function Wizard({ onSubmit }: { onSubmit: (d: FormData) => void }) {
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    const p = consumePrefill();
+    if (p) {
+      setData((d) => ({ ...d, ...p }));
+      toast.success("✨ Prefilled with your selected values");
+    }
+  }, []);
+
   const update = <K extends keyof FormData>(k: K, v: FormData[K]) => setData((d) => ({ ...d, [k]: v }));
 
-  const next = () => setStep((s) => Math.min(3, s + 1));
+  const next = () => {
+    setStep((s) => {
+      const ns = Math.min(3, s + 1);
+      if (ns !== s && ns < 4) toast.success(`✅ Step ${s + 1} Complete! Moving to ${stepLabels[ns]}…`);
+      return ns;
+    });
+  };
   const prev = () => setStep((s) => Math.max(0, s - 1));
 
   const handleSubmit = () => {

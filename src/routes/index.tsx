@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 import { HowItWorks } from "@/components/how-it-works";
 import { Wizard } from "@/components/wizard";
 import { ResultScreen } from "@/components/result";
+import { EligibilitySimulator } from "@/components/eligibility-simulator";
+import { Faq } from "@/components/faq";
 import { calculateScore, type FormData, type ScoreResult } from "@/lib/scoring";
 
 export const Route = createFileRoute("/")({
@@ -21,25 +22,27 @@ export const Route = createFileRoute("/")({
 });
 
 function Page() {
-  const [result, setResult] = useState<ScoreResult | null>(null);
+  const [submission, setSubmission] = useState<{ data: FormData; result: ScoreResult } | null>(null);
 
-  const handleSubmit = (d: FormData) => setResult(calculateScore(d));
+  const handleSubmit = (d: FormData) => setSubmission({ data: d, result: calculateScore(d) });
   const scrollToApply = () => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Navbar />
-        <main>
-          <Hero onApply={scrollToApply} />
-          <HowItWorks />
-          <Wizard onSubmit={handleSubmit} />
-        </main>
-        <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} LumenLoan · Decisions powered by transparent AI
-        </footer>
-        {result && <ResultScreen result={result} onReset={() => setResult(null)} />}
-      </div>
-    </ThemeProvider>
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <main>
+        <Hero onApply={scrollToApply} />
+        <HowItWorks />
+        <EligibilitySimulator />
+        <Wizard onSubmit={handleSubmit} />
+        <Faq />
+      </main>
+      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+        © {new Date().getFullYear()} LumenLoan · Decisions powered by transparent AI
+      </footer>
+      {submission && (
+        <ResultScreen result={submission.result} data={submission.data} onReset={() => setSubmission(null)} />
+      )}
+    </div>
   );
 }
