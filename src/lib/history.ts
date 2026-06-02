@@ -7,7 +7,8 @@ export type HistoryRecord = {
   result: ScoreResult;
 };
 
-const KEY = "lumenloan_history";
+const KEY = "vaultiq_history";
+const EVT = "vaultiq:history";
 
 export function loadHistory(): HistoryRecord[] {
   if (typeof window === "undefined") return [];
@@ -22,21 +23,23 @@ export function saveHistory(rec: HistoryRecord) {
   const list = loadHistory();
   list.unshift(rec);
   localStorage.setItem(KEY, JSON.stringify(list.slice(0, 50)));
-  window.dispatchEvent(new Event("lumenloan:history"));
+  window.dispatchEvent(new Event(EVT));
 }
 
 export function deleteHistory(id: string) {
   const list = loadHistory().filter((r) => r.id !== id);
   localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event("lumenloan:history"));
+  window.dispatchEvent(new Event(EVT));
 }
 
 export function clearHistory() {
   localStorage.removeItem(KEY);
-  window.dispatchEvent(new Event("lumenloan:history"));
+  window.dispatchEvent(new Event(EVT));
 }
 
-const PREFILL_KEY = "lumenloan_prefill";
+export const HISTORY_EVENT = EVT;
+
+const PREFILL_KEY = "vaultiq_prefill";
 export function setPrefill(data: Partial<FormData>) {
   sessionStorage.setItem(PREFILL_KEY, JSON.stringify(data));
 }

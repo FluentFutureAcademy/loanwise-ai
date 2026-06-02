@@ -2,9 +2,10 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle, AlertTriangle, RotateCcw, Download, Save } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, RotateCcw, Download } from "lucide-react";
 import type { FormData, ScoreResult } from "@/lib/scoring";
 import { saveHistory, fmtPKR } from "@/lib/history";
+import { downloadLetter } from "@/lib/letter";
 import { FinancialHealth } from "./financial-health";
 import { ReapplySimulator } from "./reapply-simulator";
 import { cn } from "@/lib/utils";
@@ -63,21 +64,21 @@ export function ResultScreen({ result, data, onReset }: { result: ScoreResult; d
       burst();
       setTimeout(burst, 400);
     }
-    if (approved) toast.success("🎉 Congratulations! Your loan has been approved!");
-    else if (conditional) toast.warning("⚠️ Conditionally Approved. Check recommendations below.");
-    else toast.error("❌ Application needs review. See improvement tips.");
+    if (approved) toast.success("🎉 VaultIQ: Your loan is Approved!");
+    else if (conditional) toast.warning("⚠️ VaultIQ: Conditionally Approved.");
+    else toast.error("❌ VaultIQ: Application needs review.");
 
     // auto-save once
     if (!savedRef.current) {
       savedRef.current = true;
       saveHistory({ id: crypto.randomUUID(), date: Date.now(), data, result });
-      setTimeout(() => toast.success("💾 Application saved to history."), 800);
+      setTimeout(() => toast.success("💾 Saved to VaultIQ history."), 800);
     }
   }, [approved, conditional, data, result]);
 
   const downloadPdf = () => {
-    window.print();
-    toast.success("📄 Your report has been downloaded successfully.");
+    downloadLetter(result.decision, data, result);
+    toast.success("📄 VaultIQ letter downloaded successfully.");
   };
 
   const Icon = approved ? CheckCircle2 : conditional ? AlertTriangle : XCircle;
@@ -184,9 +185,20 @@ export function ResultScreen({ result, data, onReset }: { result: ScoreResult; d
           <ReapplySimulator data={data} original={result} />
 
           <div className="mt-8 flex flex-wrap justify-center gap-3 print:hidden">
-            <button onClick={downloadPdf}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-cyan px-5 py-3 text-sm font-semibold text-primary-foreground glow-cyan hover:glow-cyan-strong transition-all">
-              <Download className="h-4 w-4" /> Download PDF
+            <button
+              onClick={downloadPdf}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-all",
+                approved && "bg-success hover:opacity-90",
+                conditional && "bg-warning text-warning-foreground hover:opacity-90",
+                !approved && !conditional && "bg-destructive hover:opacity-90",
+              )}
+              style={{ boxShadow: `0 0 30px ${color}` }}
+            >
+              <Download className="h-4 w-4" />
+              {approved && "Download Approval Letter"}
+              {conditional && "Download Conditional Letter"}
+              {!approved && !conditional && "Download Rejection Letter"}
             </button>
             <button onClick={onReset}
               className="inline-flex items-center gap-2 rounded-xl border border-primary/40 px-5 py-3 text-sm font-semibold hover:bg-primary/10 transition-colors">

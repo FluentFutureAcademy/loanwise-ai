@@ -1,4 +1,4 @@
-import { Moon, Sun, Sparkles, Menu, X } from "lucide-react";
+import { Moon, Sun, Vault, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useTheme } from "./theme-provider";
@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/" as const, label: "Home" },
-  { to: "/" as const, label: "Apply", hash: "apply" },
-  { to: "/dashboard" as const, label: "Dashboard" },
+  { to: "/" as const, label: "Apply Now", hash: "apply" },
+  { to: "/emi" as const, label: "EMI Calculator" },
   { to: "/compare" as const, label: "Compare" },
-  { to: "/emi" as const, label: "EMI" },
+  { to: "/dashboard" as const, label: "Dashboard" },
   { to: "/history" as const, label: "History" },
 ];
 
@@ -20,11 +20,18 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-4">
       <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between rounded-2xl glass px-5 py-3">
-        <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-cyan glow-cyan">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
+        <Link to="/" className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-cyan glow-cyan">
+            <Vault className="h-5 w-5 text-primary-foreground" />
           </span>
-          <span className="text-lg">Lumen<span className="text-gradient-cyan">Loan</span></span>
+          <span className="leading-tight">
+            <span className="block text-lg font-bold tracking-tight">
+              <span className="text-foreground">Vault</span><span className="text-gradient-cyan">IQ</span>
+            </span>
+            <span className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Smart · Secure · Certain
+            </span>
+          </span>
         </Link>
 
         <nav className="hidden lg:flex gap-6 text-sm text-muted-foreground">

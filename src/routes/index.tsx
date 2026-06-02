@@ -1,21 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from "react";
-import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 import { HowItWorks } from "@/components/how-it-works";
 import { Wizard } from "@/components/wizard";
 import { ResultScreen } from "@/components/result";
 import { EligibilitySimulator } from "@/components/eligibility-simulator";
 import { Faq } from "@/components/faq";
+import { SiteLayout } from "@/components/site-layout";
 import { calculateScore, type FormData, type ScoreResult } from "@/lib/scoring";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LumenLoan — AI Loan Approval Predictions" },
-      { name: "description", content: "Instant AI-powered loan eligibility decisions with transparent scoring and bank-level security." },
-      { property: "og:title", content: "LumenLoan — AI Loan Approval Predictions" },
-      { property: "og:description", content: "Instant AI-powered loan eligibility decisions with transparent scoring." },
+      { title: "VaultIQ — Smart Loan Intelligence" },
+      { name: "description", content: "VaultIQ predicts your loan approval instantly using AI-powered financial analysis." },
+      { property: "og:title", content: "VaultIQ — Smart Loan Intelligence" },
+      { property: "og:description", content: "VaultIQ predicts your loan approval instantly using AI-powered financial analysis." },
     ],
   }),
   component: Page,
@@ -28,21 +28,15 @@ function Page() {
   const scrollToApply = () => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <main>
-        <Hero onApply={scrollToApply} />
-        <HowItWorks />
-        <EligibilitySimulator />
-        <Wizard onSubmit={handleSubmit} />
-        <Faq />
-      </main>
-      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} LumenLoan · Decisions powered by transparent AI
-      </footer>
+    <SiteLayout>
+      <Hero onApply={scrollToApply} />
+      <HowItWorks />
+      <EligibilitySimulator />
+      <Wizard onSubmit={handleSubmit} />
+      <Faq />
       {submission && (
         <ResultScreen result={submission.result} data={submission.data} onReset={() => setSubmission(null)} />
       )}
-    </div>
+    </SiteLayout>
   );
 }

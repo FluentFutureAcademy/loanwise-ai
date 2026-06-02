@@ -7,7 +7,7 @@ import { calcEMI, fmtPKR, setPrefill } from "@/lib/history";
 import { calculateScore, defaultFormData } from "@/lib/scoring";
 
 export const Route = createFileRoute("/compare")({
-  head: () => ({ meta: [{ title: "Compare Loans — LumenLoan" }, { name: "description", content: "Side-by-side comparison of up to 3 loan scenarios." }] }),
+  head: () => ({ meta: [{ title: "Compare Loans — VaultIQ" }, { name: "description", content: "Side-by-side comparison of up to 3 loan scenarios with VaultIQ." }] }),
   component: ComparePage,
 });
 

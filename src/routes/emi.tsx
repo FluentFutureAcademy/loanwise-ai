@@ -6,7 +6,7 @@ import { calcEMI, fmtPKR } from "@/lib/history";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 export const Route = createFileRoute("/emi")({
-  head: () => ({ meta: [{ title: "EMI Calculator — LumenLoan" }, { name: "description", content: "Calculate your monthly EMI, total interest and payment schedule." }] }),
+  head: () => ({ meta: [{ title: "EMI Calculator — VaultIQ" }, { name: "description", content: "Calculate your monthly EMI, total interest and payment schedule with VaultIQ." }] }),
   component: EmiPage,
 });
 
