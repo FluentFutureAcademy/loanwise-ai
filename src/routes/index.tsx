@@ -1,29 +1,45 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Navbar } from "@/components/navbar";
+import { Hero } from "@/components/hero";
+import { HowItWorks } from "@/components/how-it-works";
+import { Wizard } from "@/components/wizard";
+import { ResultScreen } from "@/components/result";
+import { calculateScore, type FormData, type ScoreResult } from "@/lib/scoring";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "LumenLoan — AI Loan Approval Predictions" },
+      { name: "description", content: "Instant AI-powered loan eligibility decisions with transparent scoring and bank-level security." },
+      { property: "og:title", content: "LumenLoan — AI Loan Approval Predictions" },
+      { property: "og:description", content: "Instant AI-powered loan eligibility decisions with transparent scoring." },
     ],
   }),
-  component: Index,
+  component: Page,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Page() {
+  const [result, setResult] = useState<ScoreResult | null>(null);
+
+  const handleSubmit = (d: FormData) => setResult(calculateScore(d));
+  const scrollToApply = () => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main>
+          <Hero onApply={scrollToApply} />
+          <HowItWorks />
+          <Wizard onSubmit={handleSubmit} />
+        </main>
+        <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} LumenLoan · Decisions powered by transparent AI
+        </footer>
+        {result && <ResultScreen result={result} onReset={() => setResult(null)} />}
+      </div>
+    </ThemeProvider>
   );
 }
