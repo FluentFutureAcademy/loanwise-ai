@@ -1,8 +1,12 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
-import { CheckCircle2, XCircle, AlertTriangle, RotateCcw } from "lucide-react";
-import type { ScoreResult } from "@/lib/scoring";
+import { toast } from "sonner";
+import { CheckCircle2, XCircle, AlertTriangle, RotateCcw, Download, Save } from "lucide-react";
+import type { FormData, ScoreResult } from "@/lib/scoring";
+import { saveHistory, fmtPKR } from "@/lib/history";
+import { FinancialHealth } from "./financial-health";
+import { ReapplySimulator } from "./reapply-simulator";
 import { cn } from "@/lib/utils";
 
 function Gauge({ score, color }: { score: number; color: string }) {
@@ -39,9 +43,10 @@ function Gauge({ score, color }: { score: number; color: string }) {
   );
 }
 
-export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset: () => void }) {
+export function ResultScreen({ result, data, onReset }: { result: ScoreResult; data: FormData; onReset: () => void }) {
   const approved = result.decision === "APPROVED";
   const conditional = result.decision === "CONDITIONAL";
+  const savedRef = useRef(false);
   const color =
     result.score >= 70 ? "oklch(0.78 0.18 155)" :
     result.score >= 50 ? "oklch(0.85 0.16 85)" :
@@ -58,7 +63,22 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
       burst();
       setTimeout(burst, 400);
     }
-  }, [approved, conditional]);
+    if (approved) toast.success("🎉 Congratulations! Your loan has been approved!");
+    else if (conditional) toast.warning("⚠️ Conditionally Approved. Check recommendations below.");
+    else toast.error("❌ Application needs review. See improvement tips.");
+
+    // auto-save once
+    if (!savedRef.current) {
+      savedRef.current = true;
+      saveHistory({ id: crypto.randomUUID(), date: Date.now(), data, result });
+      setTimeout(() => toast.success("💾 Application saved to history."), 800);
+    }
+  }, [approved, conditional, data, result]);
+
+  const downloadPdf = () => {
+    window.print();
+    toast.success("📄 Your report has been downloaded successfully.");
+  };
 
   const Icon = approved ? CheckCircle2 : conditional ? AlertTriangle : XCircle;
   const headline =
@@ -66,13 +86,31 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
     conditional ? "Approved With Conditions" :
     "Application Needs Review";
 
+  const recommendations = (() => {
+    if (approved) return [
+      "Lock in this rate by submitting documents within 14 days.",
+      "Consider auto-debit to maintain a perfect repayment streak.",
+      "Keep credit utilization under 30% to maximize future offers.",
+    ];
+    if (conditional) return [
+      "Add a salaried co-applicant to push your score above 70.",
+      "Reduce loan amount by ~15% or extend tenure for stronger ratio.",
+      "Clear any existing high-interest EMIs before disbursement.",
+    ];
+    return [
+      "Build 6 months of clean credit history before reapplying.",
+      "Lower the loan amount or extend tenure for a workable ratio.",
+      "Increase declared monthly income or add a co-applicant.",
+    ];
+  })();
+
   return (
     <motion.section
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
       className="fixed inset-0 z-40 overflow-y-auto bg-background"
     >
       <div className="absolute inset-0 bg-hero-radial" />
-      <div className="relative min-h-screen flex items-center justify-center px-6 py-20">
+      <div className="relative min-h-screen flex items-start justify-center px-6 py-20">
         <div className="max-w-3xl w-full text-center">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
@@ -101,6 +139,9 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
           >
             {headline}
           </motion.h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Loan request: <span className="text-foreground font-semibold">{fmtPKR(data.loanAmount)}</span> over {data.loanTerm} months
+          </p>
 
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
@@ -109,10 +150,7 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
             <Gauge score={result.score} color={color} />
 
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <span
-                className="rounded-full px-4 py-2 text-sm font-semibold"
-                style={{ background: `${color}25`, color }}
-              >
+              <span className="rounded-full px-4 py-2 text-sm font-semibold" style={{ background: `${color}25`, color }}>
                 {result.decision}
               </span>
               <span className="rounded-full px-4 py-2 text-sm font-semibold glass">
@@ -121,9 +159,7 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
             </div>
 
             <div className="mt-8 text-left">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Score Breakdown
-              </h3>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Score Breakdown</h3>
               <div className="space-y-2">
                 {result.breakdown.map((b) => (
                   <div key={b.label} className="flex items-center justify-between rounded-lg bg-muted/40 px-4 py-2.5 text-sm">
@@ -135,12 +171,28 @@ export function ResultScreen({ result, onReset }: { result: ScoreResult; onReset
             </div>
           </motion.div>
 
-          <button
-            onClick={onReset}
-            className="mt-8 inline-flex items-center gap-2 rounded-xl border border-primary/40 px-6 py-3 text-sm font-semibold hover:bg-primary/10 transition-colors"
-          >
-            <RotateCcw className="h-4 w-4" /> Start a new application
-          </button>
+          <div className="mt-6 glass rounded-3xl p-6 md:p-8 text-left">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">AI Recommendations</h3>
+            <ul className="space-y-2 text-sm">
+              {recommendations.map((r) => (
+                <li key={r} className="flex gap-2"><span className="text-primary">→</span>{r}</li>
+              ))}
+            </ul>
+          </div>
+
+          <FinancialHealth data={data} result={result} />
+          <ReapplySimulator data={data} original={result} />
+
+          <div className="mt-8 flex flex-wrap justify-center gap-3 print:hidden">
+            <button onClick={downloadPdf}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-cyan px-5 py-3 text-sm font-semibold text-primary-foreground glow-cyan hover:glow-cyan-strong transition-all">
+              <Download className="h-4 w-4" /> Download PDF
+            </button>
+            <button onClick={onReset}
+              className="inline-flex items-center gap-2 rounded-xl border border-primary/40 px-5 py-3 text-sm font-semibold hover:bg-primary/10 transition-colors">
+              <RotateCcw className="h-4 w-4" /> New application
+            </button>
+          </div>
         </div>
       </div>
     </motion.section>
